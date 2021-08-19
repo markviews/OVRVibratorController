@@ -31,3 +31,4 @@ You can controll vibration speed using sliders or your controller triggers.<br>
 * There is currently no vr overlay, but you could attach the program to your hand using XSOverlay
 * You can connect up to 7 toys (toys with multiple sliders count as 2). You could always open a second instance of the program tho
 * Press `Set Hold Button` or `Set Lock Button` twice to disable
+* You can view the server source code [here](https://github.com/markviews/VRChatVibratorController/blob/main/Server/vibe.js)
