@@ -87,9 +87,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="openvr_api.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="resources\openvr_api.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\websocket-sharp-core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\LICENSE_openvr.txt" />
+    <EmbeddedResource Include="resources\LICENSE_websocket-sharp.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Valve.VR;
@@ -21,9 +22,19 @@ namespace VibratorController {
 
         [STAThread]
         static void Main() {
+            if (!File.Exists("openvr_api.dll")) extractFile("openvr_api.dll");
+            if (!File.Exists("websocket-sharp-core.dll")) extractFile("websocket-sharp-core.dll");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
+
+        public static void extractFile(string file) {
+            using (Stream s = Assembly.GetCallingAssembly().GetManifestResourceStream("VibratorController.resources." + file))
+            using (BinaryReader r = new BinaryReader(s))
+            using (FileStream fs = new FileStream(Environment.CurrentDirectory + @"\" + file, FileMode.OpenOrCreate))
+            using (BinaryWriter w = new BinaryWriter(fs)) w.Write(r.ReadBytes((int)s.Length));
         }
 
         internal void Setup() {
@@ -36,6 +47,8 @@ namespace VibratorController {
             if (!File.Exists("settings.txt")) {
                 settings.Add("hold", "None");
                 settings.Add("lock", "None");
+                extractFile("LICENSE_openvr.txt");
+                extractFile("LICENSE_websocket-sharp.txt");
                 SaveSettings();
             }
 
