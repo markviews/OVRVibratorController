@@ -223,6 +223,7 @@ namespace VibratorController {
             this.Controls.Add(this.setLock);
             this.Controls.Add(this.setHold);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.ShowIcon = false;
             this.Text = "OVR Vibrator Controller";

@@ -92,7 +92,6 @@ namespace VibratorController {
                             data = args[i].Split(':');
                             form.addToy(data[0], data[1]);
                         }
-
                         break;
                     case "remove"://remove toy
                         data = args[1].Split(':');
@@ -248,9 +247,15 @@ namespace VibratorController {
                             }
                             break;
                         case Toy.Hand.Both:
-                            if (toy.name == "Edge" || toy.name == "Max") {
-                                if (index == leftIndex) toy.moveSlider(sliderVal, 1);
+                            if (toy.name == "Edge") {
+                                if (index == rightIndex) toy.moveSlider(sliderVal, 1);
                                 else toy.moveSlider(sliderVal, 2);
+                            } else if (toy.name == "Max") {
+                                if (index == leftIndex) toy.moveSlider(sliderVal, 1);
+                                else {
+                                    int maxToySliderVal = Convert.ToInt32(value * 3);
+                                    toy.moveSlider(maxToySliderVal, 2);
+                                }
                             } else {
                                 int left, right;
 
@@ -276,11 +281,6 @@ namespace VibratorController {
 
         internal void Send(string msg) {
             ws.Send(msg);
-            /*
-            ws.SendAsync(msg, (Action<bool>)delegate (bool success) {
-                Console.WriteLine(success + " " + msg);
-            });
-            */
         }
 
     }

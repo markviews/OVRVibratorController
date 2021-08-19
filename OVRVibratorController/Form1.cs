@@ -260,7 +260,7 @@ namespace VibratorController {
             moveSliderEvent(newValue, vibeNum);
 
             //actually move the slider
-            if (vibeNum == 0) slider.Invoke((Action)delegate () { slider.Value = newValue; });
+            if (vibeNum == 0 || (name == "Edge" && vibeNum == 1)) slider.Invoke((Action)delegate () { slider.Value = newValue; });
             else slider2.Invoke((Action)delegate () { slider2.Value = newValue; });
         }
 
@@ -317,8 +317,13 @@ namespace VibratorController {
             slider.Location = new Point(110, 388 - (51 * (form.rows)));
             if (slider2 != null) {
                 slider2.Location = new Point(110, 388 - (51 * (form.rows + 1)));
-                form.rows += 2;
-            } else form.rows++;
+                form.rows++;
+            } 
+            if (rotateButton != null) {
+                rotateButton.Location = new Point(110, 388 - (51 * (form.rows + 1)));
+                form.rows++;
+            }
+            form.rows++;
         }
 
         internal enum Hand {
