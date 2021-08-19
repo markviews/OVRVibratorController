@@ -8,20 +8,18 @@ namespace VibratorController {
     class OVRVibratorController {
 
         /* 
-         * This version does not work, pressing the "Add Toy" button just makes a client side toy for testing and does not contact the server
-         * 
          * Bug:
-         * (rare) OVR dosen't register trigger input, maybe auto detect and restart OVR connection? (trigger button press with no trigger input)
+         *  (rare) OVR dosen't register trigger input, maybe auto detect and restart OVR connection? (trigger button press with no trigger input)
          * 
          * Features to add:
-         * Nora's rotate controll
-         * Save Hold/Lock prefrences to file and load on startup
+         *  Save Hold/Lock prefrences to file and load on startup
          */
 
         private WebSocket ws;
         private CVRSystem VRSystem;
         private List<uint> controllers = new List<uint>();
         private uint leftIndex, rightIndex;
+        internal Form1 form;
 
         internal uint holdButton, LockButton;
         internal int holdController = -1, LockController = -1;//-1 = none, -2 = searching
@@ -36,26 +34,60 @@ namespace VibratorController {
         internal void SetupClient() {
             ws = new WebSocket("wss://control.markstuff.net:8080");
 
-            ws.OnMessage += (sender, e) => {
-                Console.WriteLine("msg from server: " + e.Data);
-            };
-
             ws.OnOpen += (sender, e) => {
                 Console.WriteLine("connected to server!");
-                Form1.setServerStatus(true);
+                form.setServerStatus(true);
             };
 
             ws.OnClose += (sender, e) => {
                 Console.WriteLine("disconnected from server!");
-                Form1.setServerStatus(false);
+                form.setServerStatus(false);
             };
 
             ws.OnError += (sender, e) => {
                 Console.WriteLine("error: " + e.Message);
             };
 
+            ws.OnMessage += (sender, e) => {
+                Console.WriteLine("msg from server: " + e.Data);
+
+                string[] args = e.Data.Split(' ');
+                string[] data;
+
+                switch (args[0]) {
+                    case "toys":
+                    case "add"://add toy
+
+                        for (int i = 1; i < args.Length; i++) {
+                            data = args[i].Split(':');
+                            form.addToy(data[0], data[1]);
+                        }
+
+                        break;
+                    case "remove"://remove toy
+                        data = args[1].Split(':');
+                        string id = data[1];
+
+                        foreach (Toy toy in form.toys.ToArray()) {
+                            if (toy.id == id) {
+                                toy.remove();
+                                break;
+                            }
+                        }
+
+                        break;
+                    case "notFound":
+                        MessageBox.Show("invalid code");
+                        break;
+                    case "left":
+                        foreach (Toy toy in form.toys.ToArray()) toy.remove();
+                        MessageBox.Show("user left the session");
+                        break;
+                }
+
+            };
+
             ws.Connect();
-            ws.Send("join 12P6");
         }
 
         internal void SetupOVR() {
@@ -63,16 +95,16 @@ namespace VibratorController {
             EVRInitError error = EVRInitError.None;
             try {
                 VRSystem = OpenVR.Init(ref error, EVRApplicationType.VRApplication_Background);
-            } catch (BadImageFormatException e) {
+            } catch (BadImageFormatException) {
                 MessageBox.Show("Failed to hook OpenVR. Incorrect version of openvr_api.dll used (36 or 64 bit)");
-                Form1.setOVRStatus(false);
+                form.setOVRStatus(false);
                 return;
             }
             
             if (error == EVRInitError.None) {
-                Form1.setOVRStatus(true);
+                form.setOVRStatus(true);
             } else {
-                Form1.setOVRStatus(false);
+                form.setOVRStatus(false);
                 return;
             }
 
@@ -97,11 +129,11 @@ namespace VibratorController {
             rightIndex = VRSystem.GetTrackedDeviceIndexForControllerRole(ETrackedControllerRole.RightHand);
 
             if (leftIndex > max) {
-                if (rightIndex > max) Form1.setControllerStatus("Can't find left or right controllers");
-                else Form1.setControllerStatus("Can't find left controller");
+                if (rightIndex > max) form.setControllerStatus("Can't find left or right controllers");
+                else form.setControllerStatus("Can't find left controller");
             } else if (rightIndex > max) {
-                Form1.setControllerStatus("Can't find right controller");
-            } else Form1.setControllerStatus("good");
+                form.setControllerStatus("Can't find right controller");
+            } else form.setControllerStatus("good");
         }
 
         private void Update() {
@@ -119,14 +151,14 @@ namespace VibratorController {
                     if (holdController == -2) {
                         holdController = (int)index;
                         holdButton = button;
-                        Form1.setHoldButtonText(button.ToString());
+                        form.setHoldButtonText(button.ToString());
                         return;
                     }
 
                     if (LockController == -2) {
                         LockController = (int)index;
                         LockButton = button;
-                        Form1.setLockButtonText(button.ToString());
+                        form.setLockButtonText(button.ToString());
                         return;
                     }
 
@@ -140,19 +172,31 @@ namespace VibratorController {
                 VRControllerState_t state = new VRControllerState_t();
                 VRSystem.GetControllerState(index, ref state, (uint)System.Runtime.InteropServices.Marshal.SizeOf(state));
                 float value = state.rAxis1.x;
-                int sliderVal = Convert.ToInt32(value * Form1.getSliderMax());
+                int sliderVal = Convert.ToInt32(value * form.getSliderMax());
 
-                foreach (Toy toy in Form1.toys.ToArray()) {
+                foreach (Toy toy in form.toys.ToArray()) {
                     switch (toy.hand) {
                         case Toy.Hand.Left:
-                            if (index == leftIndex) toy.moveSlider(sliderVal);
+                            if (index == leftIndex) {
+                                if (toy.name == "Edge") {
+                                    toy.moveSlider(sliderVal, 1);
+                                    toy.moveSlider(sliderVal, 2);
+                                } else
+                                    toy.moveSlider(sliderVal);
+                            }
                             break;
                         case Toy.Hand.Right:
-                            if (index == rightIndex) toy.moveSlider(sliderVal);
+                            if (index == rightIndex) {
+                                if (toy.name == "Edge") {
+                                    toy.moveSlider(sliderVal, 1);
+                                    toy.moveSlider(sliderVal, 2);
+                                } else
+                                    toy.moveSlider(sliderVal);
+                            }
                             break;
                         case Toy.Hand.Both:
                             if (toy.name == "Edge" || toy.name == "Max") {
-                                if (index == leftIndex) toy.moveSlider(sliderVal);
+                                if (index == leftIndex) toy.moveSlider(sliderVal, 1);
                                 else toy.moveSlider(sliderVal, 2);
                             } else {
                                 int left, right;
@@ -160,10 +204,10 @@ namespace VibratorController {
                                 if (index == leftIndex) {
                                     VRSystem.GetControllerState(rightIndex, ref state, (uint)System.Runtime.InteropServices.Marshal.SizeOf(state));
                                     left = sliderVal;
-                                    right = Convert.ToInt32(state.rAxis1.x * Form1.getSliderMax());
+                                    right = Convert.ToInt32(state.rAxis1.x * form.getSliderMax());
                                 } else {
                                     VRSystem.GetControllerState(leftIndex, ref state, (uint)System.Runtime.InteropServices.Marshal.SizeOf(state));
-                                    left = Convert.ToInt32(state.rAxis1.x * Form1.getSliderMax());
+                                    left = Convert.ToInt32(state.rAxis1.x * form.getSliderMax());
                                     right = sliderVal;
                                 }
 
@@ -175,6 +219,15 @@ namespace VibratorController {
                 }
                     
             }
+        }
+
+        internal void Send(string msg) {
+            ws.Send(msg);
+            /*
+            ws.SendAsync(msg, (Action<bool>)delegate (bool success) {
+                Console.WriteLine(success + " " + msg);
+            });
+            */
         }
 
     }

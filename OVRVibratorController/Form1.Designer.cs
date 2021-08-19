@@ -38,6 +38,7 @@ namespace VibratorController {
             this.slider1 = new System.Windows.Forms.TrackBar();
             this.name1 = new System.Windows.Forms.Label();
             this.controllerStatus = new System.Windows.Forms.Label();
+            this.rotateButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.slider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -143,7 +144,6 @@ namespace VibratorController {
             this.dropdown1.TabIndex = 5;
             this.dropdown1.Tag = "";
             this.dropdown1.Visible = false;
-            this.dropdown1.SelectedIndexChanged += new System.EventHandler(this.dropdown1_SelectedIndexChanged);
             // 
             // slider1
             // 
@@ -179,10 +179,24 @@ namespace VibratorController {
             this.controllerStatus.TabIndex = 14;
             this.controllerStatus.Text = "Can\'t find left and right controllers..";
             // 
+            // rotateButton
+            // 
+            this.rotateButton.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.rotateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rotateButton.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.rotateButton.Location = new System.Drawing.Point(110, 388);
+            this.rotateButton.Name = "rotateButton";
+            this.rotateButton.Size = new System.Drawing.Size(504, 45);
+            this.rotateButton.TabIndex = 15;
+            this.rotateButton.Text = "Rotate";
+            this.rotateButton.UseVisualStyleBackColor = false;
+            this.rotateButton.Visible = false;
+            // 
             // Form1
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(57)))), ((int)(((byte)(63)))));
             this.ClientSize = new System.Drawing.Size(626, 445);
+            this.Controls.Add(this.rotateButton);
             this.Controls.Add(this.controllerStatus);
             this.Controls.Add(this.name1);
             this.Controls.Add(this.dropdown1);
@@ -208,8 +222,6 @@ namespace VibratorController {
 
         #endregion
 
-        private System.Windows.Forms.Button setHoldButton;
-        private System.Windows.Forms.Button setLockButton;
         private System.Windows.Forms.Button setHold;
         private System.Windows.Forms.Button setLock;
         private System.Windows.Forms.Button add;
@@ -222,6 +234,7 @@ namespace VibratorController {
         private System.Windows.Forms.TrackBar slider1;
         private System.Windows.Forms.Label name1;
         private System.Windows.Forms.Label controllerStatus;
+        private System.Windows.Forms.Button rotateButton;
     }
 }
 
