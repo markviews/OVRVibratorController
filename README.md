@@ -16,9 +16,11 @@ You can controll vibration speed using sliders or your controller triggers.<br>
 3. Click `Search for toys` on the [mod webpage](https://remote.markstuff.net/)
 
 ### Control Modes
-`Slider only`: speed controlled by sliders<br>
-`Left/Right`: speed controlled by trigger<br>
-`Both`: speed controlled by trigger that is pressed in more. Edge / Max: Each trigger controlls a speed / contraction.
+`Slider only` speed controlled by sliders<br>
+`Left/Right` speed controlled by trigger<br>
+`Both` speed controlled by trigger that is pressed in more. Edge / Max: Each trigger controlls a speed / contraction<br>
+`Hold Button` speed is set to 0 unless set button is held<br>
+`Lock Button` speed locks/unlocks when set button is pressed<br>
 
 ### Credits
 * [openvr](https://github.com/ValveSoftware/openvr)
@@ -28,3 +30,4 @@ You can controll vibration speed using sliders or your controller triggers.<br>
 * This mod is not developed by or associated with Lovense or Hytto.
 * There is currently no vr overlay, but you could attach the program to your hand using XSOverlay
 * You can connect up to 7 toys (toys with multiple sliders count as 2). You could always open a second instance of the program tho
+* Press `Set Hold Button` or `Set Lock Button` twice to disable
