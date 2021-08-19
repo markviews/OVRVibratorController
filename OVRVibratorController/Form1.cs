@@ -17,8 +17,7 @@ namespace VibratorController {
         }
 
         private void Form1_Load(object sender, EventArgs e) {
-            vc.SetupClient();
-            vc.SetupOVR();
+            vc.Setup();
         }
 
         private void add_Click(object sender, EventArgs e) {
@@ -40,13 +39,15 @@ namespace VibratorController {
                 //button was clicked twice in a row, set to none
                 vc.holdController = -1;
                 setHoldText.Text = "None";
+                vc.holding = true;
                 return;
             }
 
-            if (vc.LockController == -2) {
+            if (vc.lockController == -2) {
                 //lockButton was searching.. stop that
-                vc.LockController = -1;
+                vc.lockController = -1;
                 setLockText.Text = "None";
+                vc.lockSpeed = false;
             }
 
             vc.holdController = -2;
@@ -56,10 +57,11 @@ namespace VibratorController {
         private void setLock_Click(object sender, EventArgs e) {
             //-1 = none, -2 = searching
 
-            if (vc.LockController == -2) {
+            if (vc.lockController == -2) {
                 //button was clicked twice in a row, set to none
-                vc.LockController = -1;
+                vc.lockController = -1;
                 setLockText.Text = "None";
+                vc.lockSpeed = false;
                 return;
             }
 
@@ -67,9 +69,10 @@ namespace VibratorController {
                 //holdButton was searching.. stop that
                 vc.holdController = -1;
                 setHoldText.Text = "None";
+                vc.holding = true;
             }
 
-            vc.LockController = -2;
+            vc.lockController = -2;
             setLockText.Text = "Press Button";
         }
 

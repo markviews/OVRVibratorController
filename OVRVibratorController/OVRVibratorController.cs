@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Valve.VR;
 using WebSocketSharp;
@@ -7,22 +9,17 @@ using WebSocketSharp;
 namespace VibratorController {
     class OVRVibratorController {
 
-        /* 
-         * Bug:
-         *  (rare) OVR dosen't register trigger input, maybe auto detect and restart OVR connection? (trigger button press with no trigger input)
-         * 
-         * Features to add:
-         *  Save Hold/Lock prefrences to file and load on startup
-         */
-
+        internal static Dictionary<string, string> settings = new Dictionary<string, string>();
         private WebSocket ws;
         private CVRSystem VRSystem;
         private List<uint> controllers = new List<uint>();
         private uint leftIndex, rightIndex;
         internal Form1 form;
 
+        internal bool lockSpeed = false, holding = true;
+
         internal uint holdButton, LockButton;
-        internal int holdController = -1, LockController = -1;//-1 = none, -2 = searching
+        internal int holdController = -1, lockController = -1;//-1 = none, -2 = searching
 
         [STAThread]
         static void Main() {
@@ -31,7 +28,29 @@ namespace VibratorController {
             Application.Run(new Form1());
         }
 
-        internal void SetupClient() {
+        internal void Setup() {
+            SetupSettings();
+            SetupClient();
+            SetupOVR();
+        }
+
+        private void SetupSettings() {
+            if (!File.Exists("settings.txt")) {
+                settings.Add("hold", "None");
+                settings.Add("lock", "None");
+                SaveSettings();
+            }
+
+            settings = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(File.ReadAllText("settings.txt"));
+            form.setLockButtonText(settings["lock"]);
+            form.setLockButtonText(settings["hold"]);
+        }
+
+        internal void SaveSettings() {
+            File.WriteAllText("settings.txt", new JavaScriptSerializer().Serialize(settings));
+        }
+
+        private void SetupClient() {
             ws = new WebSocket("wss://control.markstuff.net:8080");
 
             ws.OnOpen += (sender, e) => {
@@ -90,7 +109,7 @@ namespace VibratorController {
             ws.Connect();
         }
 
-        internal void SetupOVR() {
+        private void SetupOVR() {
             //hook vr
             EVRInitError error = EVRInitError.None;
             try {
@@ -142,28 +161,39 @@ namespace VibratorController {
             //check buttons
             VREvent_t pEvent = new VREvent_t();
             while (VRSystem.PollNextEvent(ref pEvent, (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(VREvent_t)))) {
-                if (pEvent.eventType == 200) {
-                    uint index = pEvent.trackedDeviceIndex;
-                    uint button = pEvent.data.controller.button;
+                uint button = pEvent.data.controller.button;
+                uint index = pEvent.trackedDeviceIndex;
 
+                if (pEvent.eventType == 200) {
                     Console.WriteLine("press: " + index + " " + button);
 
                     if (holdController == -2) {
                         holdController = (int)index;
                         holdButton = button;
                         form.setHoldButtonText(button.ToString());
+                        settings["hold"] = button.ToString();
+                        holding = false;
+                        SaveSettings();
                         return;
                     }
 
-                    if (LockController == -2) {
-                        LockController = (int)index;
+                    if (lockController == -2) {
+                        lockController = (int)index;
                         LockButton = button;
                         form.setLockButtonText(button.ToString());
+                        settings["lock"] = button.ToString();
+                        SaveSettings();
                         return;
                     }
 
+                    if (button.ToString() == settings["hold"]) holding = true;
+                    if (button.ToString() == settings["lock"]) {
+                        lockSpeed = !lockSpeed;
+                        Console.WriteLine("lock: " + lockSpeed);
+                    }
                 } else if (pEvent.eventType == 201) {
                     //un-press
+                    if (button.ToString() == settings["hold"]) holding = false;
                 }
             }
 
@@ -174,7 +204,19 @@ namespace VibratorController {
                 float value = state.rAxis1.x;
                 int sliderVal = Convert.ToInt32(value * form.getSliderMax());
 
+                if (lockSpeed) return;
+
                 foreach (Toy toy in form.toys.ToArray()) {
+
+                    if (!holding) {
+                        if (toy.name == "Edge") {
+                            toy.moveSlider(0, 1);
+                            toy.moveSlider(0, 2);
+                        } else
+                            toy.moveSlider(0);
+                        return;
+                    }
+
                     switch (toy.hand) {
                         case Toy.Hand.Left:
                             if (index == leftIndex) {
