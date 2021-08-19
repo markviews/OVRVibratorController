@@ -1,4 +1,4 @@
-# OVRVibratorController
+# OVR Vibrator Controller
 
 Lets you control your friends lovense using your vr controllers.<br>
 You can controll vibration speed using sliders or your controller triggers.<br>
