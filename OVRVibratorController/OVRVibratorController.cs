@@ -9,15 +9,13 @@ using WebSocketSharp;
 namespace VibratorController {
     class OVRVibratorController {
 
-        internal static Dictionary<string, string> settings = new Dictionary<string, string>();
+        internal Dictionary<string, string> settings = new Dictionary<string, string>();
         private WebSocket ws;
         private CVRSystem VRSystem;
         private List<uint> controllers = new List<uint>();
         private uint leftIndex, rightIndex;
         internal Form1 form;
-
         internal bool lockSpeed = false, holding = true;
-
         internal uint holdButton, LockButton;
         internal int holdController = -1, lockController = -1;//-1 = none, -2 = searching
 
@@ -43,7 +41,7 @@ namespace VibratorController {
 
             settings = new JavaScriptSerializer().Deserialize<Dictionary<string, string>>(File.ReadAllText("settings.txt"));
             form.setLockButtonText(settings["lock"]);
-            form.setLockButtonText(settings["hold"]);
+            form.setHoldButtonText(settings["hold"]);
         }
 
         internal void SaveSettings() {

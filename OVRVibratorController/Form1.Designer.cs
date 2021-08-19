@@ -39,6 +39,7 @@ namespace VibratorController {
             this.name1 = new System.Windows.Forms.Label();
             this.controllerStatus = new System.Windows.Forms.Label();
             this.rotateButton = new System.Windows.Forms.Button();
+            this.version = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.slider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -192,10 +193,22 @@ namespace VibratorController {
             this.rotateButton.UseVisualStyleBackColor = false;
             this.rotateButton.Visible = false;
             // 
+            // version
+            // 
+            this.version.AutoSize = true;
+            this.version.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.version.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.version.Location = new System.Drawing.Point(579, 9);
+            this.version.Name = "version";
+            this.version.Size = new System.Drawing.Size(28, 13);
+            this.version.TabIndex = 16;
+            this.version.Text = "v1.0";
+            // 
             // Form1
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(57)))), ((int)(((byte)(63)))));
             this.ClientSize = new System.Drawing.Size(626, 445);
+            this.Controls.Add(this.version);
             this.Controls.Add(this.rotateButton);
             this.Controls.Add(this.controllerStatus);
             this.Controls.Add(this.name1);
@@ -211,8 +224,8 @@ namespace VibratorController {
             this.Controls.Add(this.setHold);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "Form1";
+            this.ShowIcon = false;
             this.Text = "OVR Vibrator Controller";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.slider1)).EndInit();
             this.ResumeLayout(false);
@@ -235,6 +248,7 @@ namespace VibratorController {
         private System.Windows.Forms.Label name1;
         private System.Windows.Forms.Label controllerStatus;
         private System.Windows.Forms.Button rotateButton;
+        private System.Windows.Forms.Label version;
     }
 }
 

@@ -40,6 +40,8 @@ namespace VibratorController {
                 vc.holdController = -1;
                 setHoldText.Text = "None";
                 vc.holding = true;
+                vc.settings["hold"] = "None";
+                vc.SaveSettings();
                 return;
             }
 
@@ -48,6 +50,8 @@ namespace VibratorController {
                 vc.lockController = -1;
                 setLockText.Text = "None";
                 vc.lockSpeed = false;
+                vc.settings["lock"] = "None";
+                vc.SaveSettings();
             }
 
             vc.holdController = -2;
@@ -62,6 +66,8 @@ namespace VibratorController {
                 vc.lockController = -1;
                 setLockText.Text = "None";
                 vc.lockSpeed = false;
+                vc.settings["lock"] = "None";
+                vc.SaveSettings();
                 return;
             }
 
@@ -70,6 +76,8 @@ namespace VibratorController {
                 vc.holdController = -1;
                 setHoldText.Text = "None";
                 vc.holding = true;
+                vc.settings["hold"] = "None";
+                vc.SaveSettings();
             }
 
             vc.lockController = -2;
