@@ -13,7 +13,7 @@ You can controll vibration speed using sliders or your controller triggers.<br>
 * Friend that has toy should follow these instructions
 1. Connect your phone to the same wifi as your computer
 2. Connect your toy to the Lovense Connect app (the pink one)
-3. Click `Search for toys` on the [mod webpage](https://remote.markstuff.net/)
+3. Type your phone's local ip in the box and click `Connect` on the [mod webpage](https://control.markstuff.net/)
 
 ### Control Modes
 `Slider only` speed controlled by sliders<br>
